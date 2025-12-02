@@ -1,4 +1,10 @@
-## Hi there 👋
+### Hi there 👋 I'm Lukas.
 
-## My name is Lukas and I am an ex League of Legends pro player, who is now pursuing a degree in Economics & Math at RUG with an exchange at HKUST. My passion lies in probability theory which is the topic I will pursue further in my MSc degree next year.
-## As far as coding goes, my primarily laguage is C++, I love the fact that it teaches me better coding habits than python although python is great as well, I have public open-source projects planned in game theory, so stay tuned :)
+**Ex-Professional League of Legends Player turned Quant.**
+Currently pursuing a double-focus in **Economics & Mathematics** at the University of Groningen (RUG) and HKUST. Also spent last Summer doing Math/Stats at LSE.
+
+My background in competitive esports taught me rapid decision-making, and now, I apply that rigor to **Probability Theory** and **low-latency engineering**.
+
+* 🔭 **Current Focus:** Stochastic Models & Game Theory.
+* 💻 **Primary Language:** **C++**. I prioritize C++ for its memory discipline and performance, though I use **Python** for data analysis.
+* 🔜 **Coming Soon:** Open-source projects in Game Theory simulations.
