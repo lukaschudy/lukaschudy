@@ -145,6 +145,11 @@
           const sourceY = y / sampleHeight * source.naturalHeight;
           const angle = seeded(index + 17) * Math.PI * 2;
           const scatter = 28 + seeded(index + 31) * Math.min(width, height) * .32;
+          const ink = {
+            r: Math.max(28, Math.round(r * .58)),
+            g: Math.max(36, Math.round(g * .60)),
+            b: Math.max(48, Math.round(b * .68))
+          };
           particles.push({
             sx: sourceX,
             sy: sourceY,
@@ -152,11 +157,11 @@
             y: fit.y + sourceY * fit.scale + Math.sin(angle) * scatter,
             vx: 0,
             vy: 0,
-            r,
-            g,
-            b,
-            a: .48 + seeded(index + 53) * .48,
-            size: .65 + seeded(index + 71) * 1.25,
+            r: ink.r,
+            g: ink.g,
+            b: ink.b,
+            a: .86 + seeded(index + 53) * .14,
+            size: .9 + seeded(index + 71) * 1.55,
             phase: seeded(index + 89) * Math.PI * 2
           });
         }
@@ -225,7 +230,7 @@
 
       for (const p of particles) {
         const speed = Math.min(1, Math.hypot(p.vx, p.vy) / 5);
-        ctx.globalAlpha = p.a * (.82 + speed * .18);
+        ctx.globalAlpha = p.a * (.92 + speed * .08);
         ctx.fillStyle = `rgb(${p.r},${p.g},${p.b})`;
         const size = p.size + speed * .65;
         ctx.fillRect(p.x, p.y, size, size);
