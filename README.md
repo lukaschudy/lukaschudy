@@ -26,4 +26,4 @@ I'm currently studying Mathematics & Computation at LSE and building [Nestor](ht
 
 I work mainly with Python, C++, JavaScript/React, PostgreSQL, Docker, AWS, and Cloudflare.
 
-[Website](https://heynestor.app) · [X](https://x.com/chudylukass)
+[Website](https://heynestor.app) · [LinkedIn](https://www.linkedin.com/in/lukaschudy) · [X](https://x.com/chudylukass)
