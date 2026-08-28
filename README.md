@@ -1,29 +1,30 @@
 # Lukas Chudy
 
-I build applied AI systems for decisions people actually have to make.
+I used to play League of Legends professionally. Now I'm building a real-time data layer for fragmented sectors that are still too slow to adapt to AI.
 
-I'm currently studying Mathematics & Computation at LSE and building [Nestor](https://heynestor.app), an AI housing-search agent for the Czech market. Before that, I played League of Legends professionally. That mix of research, software, and competitive systems still shapes the problems I like working on.
+I'm based in London and studying Mathematics & Computation at LSE. I'm also practising competitive programming, trying to take my Codeforces rating from 900 to 1800.
 
-## What I'm working on
+I track most of what I'm building and learning on [Promethee](https://www.promethee.io/@lukaschudy).
 
-- **[Nestor](https://heynestor.app)** — a live AI agent that turns a renter's requirements into monitored searches, ranked listings, and useful alerts. The production system uses Python, FastAPI, PostgreSQL, LLM tooling, and Cloudflare/AWS infrastructure.
-- **Agentic products and market data** — especially systems that collect fragmented information, reason over it, and take repetitive work off the user's plate.
-- **Mathematical and computational methods** — stochastic models, game theory, machine learning, and optimization.
+## What I'm building
+
+**[Nestor](https://heynestor.app)** is the first wedge. It starts in the Prague housing market, where listings are fragmented, availability changes quickly, and renters still have to stitch the market together themselves. The system collects, structures, and monitors that data in real time, then uses it to power an AI housing-search agent.
 
 ## Selected work
 
 | Project | What it shows |
 | --- | --- |
-| **[Robustness of Algorithmic Collusion](https://github.com/lukaschudy/bsc-thesis)** | Bachelor's thesis with reproducible simulations of Q-learning pricing agents under latency, noise, and asynchronous actions. Includes the paper, C++/Fortran simulation code, Python analysis, and generated results. |
-| **[Scrim Data Tracker](https://github.com/lukaschudy/scrim-draft-tracker)** | A working League of Legends scouting tool that ingests GRID and Riot data, normalizes large event streams, and publishes a coach-facing dashboard. [Live demo](https://lukaschudy.github.io/scrim-draft-tracker/). |
+| **[iPhone Action Button TV](https://github.com/lukaschudy/atoms3u-tv-connector)** | Hold the Action Button, say what the TV should do, and release. The open-source stack turns that voice command into authenticated IR or USB HID actions through an M5Stack ATOMS3U, with Windows host software, ESP32 firmware, protocol tests, simulation, and CI builds. |
+| **[Robustness of Algorithmic Collusion](https://github.com/lukaschudy/bsc-thesis)** | My bachelor's thesis: reproducible simulations of Q-learning pricing agents under latency, noise, and asynchronous actions, with C++/Fortran simulation code and Python analysis. |
+| **[Scrim Data Tracker](https://github.com/lukaschudy/scrim-draft-tracker)** | A scouting and draft-analysis system I built for a professional League of Legends team. It ingests GRID and Riot data and turns large event streams into a coach-facing dashboard. |
 
 ## Background
 
-- MSc Mathematics & Computation, London School of Economics
+- Mathematics & Computation, London School of Economics
 - BSc Economics, minor in Mathematics, University of Groningen
 - Former professional League of Legends player
-- Based in Prague
+- Based in London
 
 I work mainly with Python, C++, JavaScript/React, PostgreSQL, Docker, AWS, and Cloudflare.
 
-[Website](https://heynestor.app) · [LinkedIn](https://www.linkedin.com/in/lukaschudy) · [X](https://x.com/chudylukass)
+[Nestor](https://heynestor.app) · [Promethee](https://www.promethee.io/@lukaschudy) · [LinkedIn](https://www.linkedin.com/in/lukaschudy) · [X](https://x.com/chudylukass)
