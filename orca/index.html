@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f3f0e9">
+  <meta name="description" content="An interactive particle orca by Lukas Chudy.">
+  <title>Orca — Lukas Chudy</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #f3f0e9;
+      --ink: #1f3449;
+      --muted: #66717c;
+      --line: rgba(31, 52, 73, .16);
+    }
+    * { box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background: var(--paper); }
+    body { color: var(--ink); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    main { position: relative; width: 100%; height: 100%; min-height: 320px; }
+    canvas { display: block; width: 100%; height: 100%; cursor: crosshair; touch-action: none; }
+    .label {
+      position: absolute;
+      top: max(18px, env(safe-area-inset-top));
+      left: max(20px, env(safe-area-inset-left));
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 11px;
+      line-height: 1;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      user-select: none;
+      pointer-events: none;
+    }
+    .label::before { content: ""; width: 22px; height: 1px; background: currentColor; opacity: .5; }
+    .hint {
+      position: absolute;
+      right: max(20px, env(safe-area-inset-right));
+      bottom: max(18px, env(safe-area-inset-bottom));
+      margin: 0;
+      color: var(--muted);
+      font-size: 10px;
+      line-height: 1.4;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      user-select: none;
+      pointer-events: none;
+      transition: opacity .7s ease;
+    }
+    .hint.is-quiet { opacity: .24; }
+    .fallback { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+    @media (max-width: 520px) {
+      .label { font-size: 10px; }
+      .hint { max-width: 165px; text-align: right; }
+    }
+  </style>
+</head>
+<body>
+  <main aria-label="Interactive particle orca">
+    <canvas id="orca" aria-describedby="instructions"></canvas>
+    <div class="label" aria-hidden="true">Orca / data in motion</div>
+    <p class="hint" aria-hidden="true">Move to disturb · press to pulse</p>
+    <p id="instructions" class="fallback">An orca made of particles. Move a pointer or finger across it to scatter the particles; press to create a wave. The particles return to the orca shape.</p>
+  </main>
+  <img id="source" src="./orca-source.png" alt="" hidden>
+
+  <script>
+  (() => {
+    'use strict';
+
+    const canvas = document.querySelector('#orca');
+    const ctx = canvas.getContext('2d', { alpha: false });
+    const source = document.querySelector('#source');
+    const hint = document.querySelector('.hint');
+    const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const particles = [];
+    const pointer = { x: -9999, y: -9999, active: false, down: false };
+    const pulses = [];
+    let width = 0;
+    let height = 0;
+    let dpr = 1;
+    let fit = { scale: 1, x: 0, y: 0 };
+    let last = performance.now();
+    let elapsed = 0;
+    let sourceReady = false;
+    let interactionCount = 0;
+
+    const BG = '#f3f0e9';
+    const SOURCE_BG = { r: 245, g: 242, b: 235 };
+
+    function seeded(index) {
+      const x = Math.sin(index * 9187.137 + 12.31) * 43758.5453;
+      return x - Math.floor(x);
+    }
+
+    function resize() {
+      width = Math.max(320, window.innerWidth);
+      height = Math.max(320, window.innerHeight);
+      dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+      canvas.width = Math.round(width * dpr);
+      canvas.height = Math.round(height * dpr);
+      canvas.style.width = width + 'px';
+      canvas.style.height = height + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      calculateFit();
+    }
+
+    function calculateFit() {
+      if (!sourceReady) return;
+      const marginX = Math.max(32, width * .075);
+      const marginY = Math.max(54, height * .13);
+      const maxW = width - marginX * 2;
+      const maxH = height - marginY * 2;
+      const scale = Math.min(maxW / source.naturalWidth, maxH / source.naturalHeight);
+      fit = {
+        scale,
+        x: (width - source.naturalWidth * scale) / 2,
+        y: (height - source.naturalHeight * scale) / 2 + height * .015
+      };
+    }
+
+    function buildParticles() {
+      const sample = document.createElement('canvas');
+      const sampleWidth = 960;
+      const sampleHeight = Math.round(sampleWidth * source.naturalHeight / source.naturalWidth);
+      sample.width = sampleWidth;
+      sample.height = sampleHeight;
+      const sctx = sample.getContext('2d', { willReadFrequently: true });
+      sctx.drawImage(source, 0, 0, sampleWidth, sampleHeight);
+      const pixels = sctx.getImageData(0, 0, sampleWidth, sampleHeight).data;
+      const step = width < 620 ? 4 : 3;
+      particles.length = 0;
+
+      for (let y = 0; y < sampleHeight; y += step) {
+        for (let x = 0; x < sampleWidth; x += step) {
+          const i = (y * sampleWidth + x) * 4;
+          const r = pixels[i];
+          const g = pixels[i + 1];
+          const b = pixels[i + 2];
+          const delta = Math.abs(r - SOURCE_BG.r) + Math.abs(g - SOURCE_BG.g) + Math.abs(b - SOURCE_BG.b);
+          if (delta < 58) continue;
+          const index = particles.length;
+          const sourceX = x / sampleWidth * source.naturalWidth;
+          const sourceY = y / sampleHeight * source.naturalHeight;
+          const angle = seeded(index + 17) * Math.PI * 2;
+          const scatter = 28 + seeded(index + 31) * Math.min(width, height) * .32;
+          particles.push({
+            sx: sourceX,
+            sy: sourceY,
+            x: fit.x + sourceX * fit.scale + Math.cos(angle) * scatter,
+            y: fit.y + sourceY * fit.scale + Math.sin(angle) * scatter,
+            vx: 0,
+            vy: 0,
+            r,
+            g,
+            b,
+            a: .48 + seeded(index + 53) * .48,
+            size: .65 + seeded(index + 71) * 1.25,
+            phase: seeded(index + 89) * Math.PI * 2
+          });
+        }
+      }
+      window.__orcaStats = { ready: true, particles: particles.length, interactions: 0 };
+    }
+
+    function targetOf(p, t) {
+      const drift = reduceMotion ? 0 : Math.sin(t * .00055 + p.phase) * .6;
+      return {
+        x: fit.x + p.sx * fit.scale + drift,
+        y: fit.y + p.sy * fit.scale + Math.cos(t * .00042 + p.phase) * .35
+      };
+    }
+
+    function update(dt, now) {
+      const frame = Math.min(dt / 16.667, 2.2);
+      elapsed += dt;
+      for (const p of particles) {
+        const target = targetOf(p, now);
+        let fx = (target.x - p.x) * .035;
+        let fy = (target.y - p.y) * .035;
+
+        if (pointer.active) {
+          const dx = p.x - pointer.x;
+          const dy = p.y - pointer.y;
+          const radius = pointer.down ? 142 : 105;
+          const d2 = dx * dx + dy * dy;
+          if (d2 < radius * radius && d2 > .01) {
+            const d = Math.sqrt(d2);
+            const pressure = (1 - d / radius) ** 2 * (pointer.down ? 2.6 : 1.35);
+            fx += dx / d * pressure;
+            fy += dy / d * pressure;
+          }
+        }
+
+        for (const pulse of pulses) {
+          const dx = p.x - pulse.x;
+          const dy = p.y - pulse.y;
+          const d = Math.sqrt(dx * dx + dy * dy) || 1;
+          const ring = Math.abs(d - pulse.radius);
+          if (ring < 34) {
+            const force = (1 - ring / 34) * pulse.strength;
+            fx += dx / d * force;
+            fy += dy / d * force;
+          }
+        }
+
+        p.vx = (p.vx + fx * frame) * Math.pow(.87, frame);
+        p.vy = (p.vy + fy * frame) * Math.pow(.87, frame);
+        p.x += p.vx * frame;
+        p.y += p.vy * frame;
+      }
+
+      for (let i = pulses.length - 1; i >= 0; i--) {
+        pulses[i].radius += 7.5 * frame;
+        pulses[i].strength *= Math.pow(.94, frame);
+        if (pulses[i].strength < .04 || pulses[i].radius > Math.max(width, height)) pulses.splice(i, 1);
+      }
+    }
+
+    function draw(now) {
+      ctx.fillStyle = BG;
+      ctx.fillRect(0, 0, width, height);
+      ctx.lineCap = 'round';
+
+      for (const p of particles) {
+        const speed = Math.min(1, Math.hypot(p.vx, p.vy) / 5);
+        ctx.globalAlpha = p.a * (.82 + speed * .18);
+        ctx.fillStyle = `rgb(${p.r},${p.g},${p.b})`;
+        const size = p.size + speed * .65;
+        ctx.fillRect(p.x, p.y, size, size);
+      }
+      ctx.globalAlpha = 1;
+
+      for (const pulse of pulses) {
+        ctx.strokeStyle = `rgba(31,52,73,${Math.min(.14, pulse.strength * .08)})`;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.arc(pulse.x, pulse.y, pulse.radius, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+
+      window.__orcaStats = {
+        ready: sourceReady && particles.length > 0,
+        particles: particles.length,
+        interactions: interactionCount,
+        fps: Math.round(1000 / Math.max(1, performance.now() - last))
+      };
+    }
+
+    function loop(now) {
+      const dt = now - last;
+      last = now;
+      if (sourceReady) {
+        update(dt, now);
+        draw(now);
+      }
+      requestAnimationFrame(loop);
+    }
+
+    function setPointer(event) {
+      const rect = canvas.getBoundingClientRect();
+      pointer.x = event.clientX - rect.left;
+      pointer.y = event.clientY - rect.top;
+      pointer.active = true;
+      interactionCount += 1;
+      hint.classList.add('is-quiet');
+    }
+
+    canvas.addEventListener('pointermove', setPointer, { passive: true });
+    canvas.addEventListener('pointerenter', setPointer, { passive: true });
+    canvas.addEventListener('pointerleave', () => { pointer.active = false; pointer.down = false; });
+    canvas.addEventListener('pointerdown', event => {
+      setPointer(event);
+      pointer.down = true;
+      canvas.setPointerCapture?.(event.pointerId);
+      pulses.push({ x: pointer.x, y: pointer.y, radius: 4, strength: 2.8 });
+    });
+    canvas.addEventListener('pointerup', () => { pointer.down = false; });
+    canvas.addEventListener('pointercancel', () => { pointer.active = false; pointer.down = false; });
+    canvas.addEventListener('keydown', event => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        pulses.push({ x: width / 2, y: height / 2, radius: 4, strength: 2.8 });
+      }
+    });
+    canvas.tabIndex = 0;
+
+    source.addEventListener('load', () => {
+      sourceReady = true;
+      resize();
+      buildParticles();
+    });
+    source.addEventListener('error', () => {
+      document.querySelector('.hint').textContent = 'The particle source could not be loaded';
+    });
+    window.addEventListener('resize', () => {
+      resize();
+      if (sourceReady) buildParticles();
+    });
+
+    resize();
+    requestAnimationFrame(loop);
+  })();
+  </script>
+</body>
+</html>
