@@ -4,7 +4,7 @@ I used to play League of Legends professionally. Now I'm building a real-time da
 
 <p align="center">
   <a href="https://lukaschudy.github.io/lukaschudy/orca/" title="Open the interactive particle orca">
-    <img src="./assets/orca-particles.gif" alt="Particle orca dispersing and reforming" width="100%">
+    <img src="./orca/orca-source.png" alt="Interactive particle orca — click to disturb the particles" width="100%">
   </a>
   <br>
   <sub>Move through the particles →</sub>
