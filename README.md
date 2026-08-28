@@ -1,18 +1,19 @@
-# Lukas Chudy
-
-I used to play League of Legends professionally. Now I'm building a real-time data layer for fragmented sectors that are still too slow to adapt to AI.
-
-<p align="center">
-  <a href="https://lukaschudy.github.io/lukaschudy/orca/" title="Open the interactive particle orca">
-    <img src="./orca/orca-source.png" alt="Interactive particle orca — click to disturb the particles" width="100%">
-  </a>
-  <br>
-  <sub>Move through the particles →</sub>
-</p>
-
-I'm based in London and studying Mathematics & Computation at LSE. I'm also practising competitive programming, trying to take my Codeforces rating from 900 -> 1800 in 9 months.
-
-I track most of what I'm building and learning on [Promethee](https://www.promethee.io/@lukaschudy).
+<table>
+  <tr>
+    <td width="55%" valign="middle">
+      <h1>Lukas Chudy</h1>
+      <p>I used to play League of Legends professionally. Now I'm building a real-time data layer for fragmented sectors that are still too slow to adapt to AI.</p>
+      <p>I'm based in London and studying Mathematics &amp; Computation at LSE. I'm also practising competitive programming, trying to take my Codeforces rating from 900 -&gt; 1800 in 9 months.</p>
+      <p>I track most of what I'm building and learning on <a href="https://www.promethee.io/@lukaschudy">Promethee</a>.</p>
+    </td>
+    <td width="45%" valign="middle">
+      <a href="https://lukaschudy.github.io/lukaschudy/orca/" title="Open the interactive particle orca">
+        <img src="./assets/orca-particles.gif" alt="Animated particle orca — open the interactive experience" width="100%">
+      </a>
+      <p align="center"><sub>Move through the particles →</sub></p>
+    </td>
+  </tr>
+</table>
 
 ## What I'm building
 
