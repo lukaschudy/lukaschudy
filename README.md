@@ -8,7 +8,11 @@
     </td>
     <td width="45%" valign="middle">
       <a href="https://lukaschudy.github.io/lukaschudy/orca/" title="Open the interactive particle orca">
-        <img src="./assets/orca-particles.gif" alt="Animated particle orca — open the interactive experience" width="100%">
+        <picture>
+          <source media="(prefers-color-scheme: dark)" srcset="./assets/orca-particles-dark.gif">
+          <source media="(prefers-color-scheme: light)" srcset="./assets/orca-particles.gif">
+          <img src="./assets/orca-particles.gif" alt="Animated particle orca — open the interactive experience" width="100%">
+        </picture>
       </a>
       <p align="center"><sub>Move through the particles →</sub></p>
     </td>
