@@ -22,7 +22,7 @@ FRAMES = 40
 DURATION_MS = 140
 SUPERSAMPLE = 2
 SOURCE_BACKGROUND = (242, 239, 232)
-LIGHT_BACKGROUND = (240, 237, 231)
+LIGHT_MATTE = (255, 255, 255)
 TRANSPARENT_KEY = (1, 0, 2)
 
 
@@ -139,7 +139,7 @@ def theme_color(source: tuple[int, int, int], dark: bool) -> tuple[int, int, int
 def render_frame(particles: list[Particle], frame_index: int, dark: bool) -> Image.Image:
     width = WIDTH * SUPERSAMPLE
     height = HEIGHT * SUPERSAMPLE
-    background = (0, 0, 0, 0) if dark else (*LIGHT_BACKGROUND, 255)
+    background = (0, 0, 0, 0)
     frame = Image.new("RGBA", (width, height), background)
     draw = ImageDraw.Draw(frame, "RGBA")
     loop_phase = frame_index / FRAMES * math.tau
@@ -183,42 +183,45 @@ def render_frame(particles: list[Particle], frame_index: int, dark: bool) -> Ima
     return frame.resize((WIDTH, HEIGHT), Image.Resampling.LANCZOS)
 
 
-def shared_palette(frames: list[Image.Image], dark: bool) -> Image.Image:
+def flatten_frame(frame: Image.Image, *, dark: bool) -> Image.Image:
+    if dark:
+        rgb = Image.new("RGB", frame.size, TRANSPARENT_KEY)
+        rgb.paste(frame.convert("RGB"), mask=frame.getchannel("A"))
+        return rgb
+
+    matte = Image.new("RGBA", frame.size, (*LIGHT_MATTE, 255))
+    matte.alpha_composite(frame)
+    return matte.convert("RGB")
+
+
+def shared_palette(frames: list[Image.Image], *, dark: bool) -> Image.Image:
     samples = frames[::4]
-    strip = Image.new("RGB", (WIDTH, HEIGHT * len(samples)), TRANSPARENT_KEY if dark else LIGHT_BACKGROUND)
+    strip = Image.new(
+        "RGB",
+        (WIDTH, HEIGHT * len(samples)),
+        TRANSPARENT_KEY if dark else LIGHT_MATTE,
+    )
     for index, frame in enumerate(samples):
-        if dark:
-            rgb = Image.new("RGB", frame.size, TRANSPARENT_KEY)
-            rgb.paste(frame.convert("RGB"), mask=frame.getchannel("A"))
-        else:
-            rgb = frame.convert("RGB")
+        rgb = flatten_frame(frame, dark=dark)
         strip.paste(rgb, (0, index * HEIGHT))
 
-    colors = 255 if dark else 256
-    quantized = strip.quantize(colors=colors, method=Image.Quantize.MEDIANCUT)
-    palette = quantized.getpalette()[: colors * 3]
-    if dark:
-        palette = [*TRANSPARENT_KEY, *palette]
+    quantized = strip.quantize(colors=255, method=Image.Quantize.MEDIANCUT)
+    palette = [*TRANSPARENT_KEY, *quantized.getpalette()[: 255 * 3]]
     palette = palette[:768] + [0] * max(0, 768 - len(palette))
     palette_image = Image.new("P", (1, 1))
     palette_image.putpalette(palette)
     return palette_image
 
 
-def encode_frames(frames: list[Image.Image], dark: bool) -> list[Image.Image]:
-    palette = shared_palette(frames, dark)
+def encode_frames(frames: list[Image.Image], *, dark: bool = False) -> list[Image.Image]:
+    palette = shared_palette(frames, dark=dark)
     encoded: list[Image.Image] = []
     for frame in frames:
-        if dark:
-            rgb = Image.new("RGB", frame.size, TRANSPARENT_KEY)
-            rgb.paste(frame.convert("RGB"), mask=frame.getchannel("A"))
-        else:
-            rgb = frame.convert("RGB")
+        rgb = flatten_frame(frame, dark=dark)
         indexed = rgb.quantize(palette=palette, dither=Image.Dither.NONE)
-        if dark:
-            transparent = frame.getchannel("A").point(lambda alpha: 255 if alpha < 12 else 0)
-            indexed.paste(0, mask=transparent)
-            indexed.info["transparency"] = 0
+        transparent = frame.getchannel("A").point(lambda alpha: 255 if alpha < 12 else 0)
+        indexed.paste(0, mask=transparent)
+        indexed.info["transparency"] = 0
         encoded.append(indexed)
     return encoded
 
@@ -226,7 +229,7 @@ def encode_frames(frames: list[Image.Image], dark: bool) -> list[Image.Image]:
 def render(source: Path, output: Path, *, dark: bool) -> tuple[int, int]:
     particles = build_particles(source)
     frames = [render_frame(particles, index, dark) for index in range(FRAMES)]
-    encoded = encode_frames(frames, dark)
+    encoded = encode_frames(frames, dark=dark)
     output.parent.mkdir(parents=True, exist_ok=True)
     encoded[0].save(
         output,
@@ -236,7 +239,7 @@ def render(source: Path, output: Path, *, dark: bool) -> tuple[int, int]:
         loop=0,
         disposal=2,
         optimize=True,
-        transparency=0 if dark else None,
+        transparency=0,
     )
     influenced = sum(1 for particle in particles if particle.curve_distance <= 34)
     return len(particles), influenced
