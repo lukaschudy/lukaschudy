@@ -12,7 +12,7 @@
 
 <p>I'm based in London and studying Mathematics &amp; Computation at LSE. I'm also practising competitive programming, trying to take my Codeforces rating from 900 -&gt; 1800 in 9 months.</p>
 
-<p>I track most of what I'm building and learning on <a href="https://www.promethee.io/@lukaschudy">Promethee</a>. <a href="https://lukaschudy.github.io/lukaschudy/orca/">Move through the particles →</a></p>
+<p>I track most of what I'm building and learning on <a href="https://www.promethee.io/@lukaschudy">Promethee</a>.
 
 <br clear="right">
 
