@@ -31,7 +31,6 @@
 ## Background
 
 - Mathematics & Computation, London School of Economics
-- BSc Economics, minor in Mathematics, University of Groningen
 - Former professional League of Legends player
 - Based in London
 
