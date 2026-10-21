@@ -12,6 +12,4 @@
 
 <p>I'm based in London and studying Mathematics &amp; Computation at LSE. I'm also practising competitive programming, trying to take my Codeforces rating from 900 -&gt; 1800 in 9 months.</p>
 
-I work mainly with Python, C++, JavaScript/React, PostgreSQL, Docker, AWS, and Cloudflare.
-
-[Nestor](https://heynestor.app) · [Promethee](https://www.promethee.io/@lukaschudy) · [LinkedIn](https://www.linkedin.com/in/lukaschudy) · [X](https://x.com/chudylukass)
+I work mainly with Python, C++, JavaScript/React, PostgreSQL, Docker, AWS, and Cloudflare
