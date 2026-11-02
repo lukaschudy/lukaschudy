@@ -10,6 +10,6 @@
 
 <p>I used to play League of Legends professionally. Now I'm building a real time data layer for fragmented sectors that are still too slow to adapt to AI.</p>
 
-<p>I'm based in London and studying Mathematics &amp; Computation at LSE. I'm also practising competitive programming.
+<p>I'm based in London and studying Mathematics at LSE. I'm also practising competitive programming.
 
 I work mainly with Python, C++, PostgreSQL, Docker, AWS, and Cloudflare
