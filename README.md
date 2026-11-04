@@ -12,4 +12,4 @@
 
 <p>I'm based in London and studying Mathematics at LSE. I'm also practising competitive programming.
 
-I work mainly with Python, C++, PostgreSQL, Docker, AWS, and Cloudflare
+I work mainly with Python, C++, PostgreSQL, AWS, and Cloudflare
