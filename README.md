@@ -8,8 +8,7 @@
   </picture>
 </a>
 
-<p>I used to play League of Legends professionally. Now I'm building a real time data layer for fragmented sectors that are still too slow to adapt to AI.</p>
+<p>I used to play League of Legends professionally. Now I'm based in London and studying MSc Mathematics at LSE and am also practising competitive programming.</p>
 
-<p>I'm based in London and studying MSc Mathematics at LSE. I'm also practising competitive programming.
 
 I work mainly with C++, PostgreSQL, AWS, and Cloudflare
