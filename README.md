@@ -11,4 +11,4 @@
 <p>I used to play League of Legends professionally. Now I'm based in London and studying MSc Mathematics at LSE and am also practising competitive programming.</p>
 
 
-I work mainly with C++, PostgreSQL, AWS, and Cloudflare
+I work mainly with C++, PostgreSQL, AWS, and Cloudflare.
